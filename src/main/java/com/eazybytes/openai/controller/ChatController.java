@@ -1,16 +1,25 @@
 package com.eazybytes.openai.controller;
 
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RestController("/api")
+
+@RestController
+@RequestMapping("/api")
 public class ChatController {
 
+    private final ChatClient chatClient;
+
+    public ChatController(ChatClient.Builder chatClientBuilder) {
+        this.chatClient = chatClientBuilder.build();
+    }
+
     @GetMapping("/chat")
-    public String chat(@RequestPart String message) {
-        return "Hello" + message;
+    public String chat(@RequestParam("message") String message) {
+        return chatClient.prompt(message).call().content();
     }
 }
